@@ -92,16 +92,16 @@ Complexity is represented in terms of three quantities:
 Comparing uninformed-search strategies
 --------------------------------------
 
-| **Criterion** | **BFS**            | **Uniform Cost**                     | **DFS**            | **Depth Limited**  | **ID-DFS**         | **Bidirectional**    |
-|---------------|--------------------|--------------------------------------|--------------------|--------------------|--------------------|----------------------|
-|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                    |   No               | Yes<sup>a</sup>    | Yes<sup>a</sup>    | Yes<sup>a,d</sup>    |
-|     Time      | *O(b<sup>d</sup>)* | *O(b<sup>1+⌊C<sup>+</sup>/ϵ⌋</sup>)* | *O(b<sup>m>/sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>d/2</sup>)* |
-|     Space     | *O(b<sup>d</sup>)* | *O(b<sup>1+⌊C<sup>+</sup>/ϵ⌋</sup>)* | *O(bm)*            | *O(bl)*            | *O(bd)*            | *O(b<sup>d/2</sup>)* |
-|    Optimal?   | Yes<sup>c</sup>    | Yes                                  |   No               | No                 | Yes<sup>c</sup>    | Yes<sup>c,d</sup>    |
+| **Criterion** | **BFS**            | **Uniform Cost**                            | **DFS**             | **Depth Limited**  | **ID-DFS**         | **Bidirectional**    |
+|---------------|--------------------|---------------------------------------------|---------------------|--------------------|--------------------|----------------------|
+|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                           |   No                | Yes<sup>a</sup>    | Yes<sup>a</sup>    | Yes<sup>a,d</sup>    |
+|     Time      | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(b<sup>m></sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>d/2</sup>)* |
+|     Space     | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(bm)*             | *O(bl)*            | *O(bd)*            | *O(b<sup>d/2</sup>)* |
+|    Optimal?   | Yes<sup>c</sup>    | Yes                                         |   No                | No                 | Yes<sup>c</sup>    | Yes<sup>c,d</sup>    |
 
 (+ is actually supposed to be \*.)
 
-Evaluation of tree-search strategies. *b* is the branching factor; *d* is the depth of the shallowest solution; *m* is the maximum depth of the search tree; *l* is the depth limit. Superscript caveats are as follows: <sup>a</sup> coplete if *b* is finite; <sup>b</sup> complete if step costs >= ϵ for positive ϵ. <sup>c</sup> optimal if step costs are all identical; <sup>d</sup> if both directions use breadth-first search. 
+Evaluation of tree-search strategies. *b* is the branching factor; *d* is the depth of the shallowest solution; *m* is the maximum depth of the search tree; *l* is the depth limit. Superscript caveats are as follows: <sup>a</sup> complete if *b* is finite; <sup>b</sup> complete if step costs >= ϵ for positive ϵ. <sup>c</sup> optimal if step costs are all identical; <sup>d</sup> if both directions use breadth-first search. 
 
 BFS (Breadth-first search)
 --------------------------
@@ -166,5 +166,21 @@ An example:
 ```
 
 The problem is to get from **Sibiu** to **Bucharest**. The successors of **Sibiu** are **Riminicu Vilcea** and **Fagaras** with path-costs `80` and `99` respectively. Since **Riminicu Vilcea** is the least-cost node, it is expanded next, which gives us **Pitesti** with a total path-cost of `80 + 97 = 177`. Now **Fagaras** is the least-cost node, and so it is expanded, giving us **Bucharest** with a cost of `99 + 211 = 310`. Now also **Bucharest** is the goal node, we keep going since we don't perform the goal test on *generated* nodes. So we will next choose **Pitesti** for expansion which adds a second path to **Bucharest** with the cost `80 + 97 + 101 = 278`. The algorithm now checks to see if this new path is better than the old one; it is and so the old one is discarded. **Bucharest** with `g`-cost `278` is now selected for expansion and then returned as a solution (because we perform the goal test when a node is selected for expansion). 
+
+ - **Optimality**: Uniform-cost search is optimal in gneral. Whenever it selects a node `n` for expansion, the optinal path to that node as been found. Why is this? Assume there exists another frontier node `n'` on the optimal path from the start node to `n`. By definition, `n'` would have a lower `g`-cost than `n` and would have been selected first. Since step-costs are non-negative, paths will never get shorter as nodes are added. 
+ - **Completeness**: Uniform-cost search is complete, assuming that the branching-factor *b* is finite, and that the step costs are >= ϵ where ϵ is some small positive-number. If the second assumption does not hold, it can get stuck in an infinite loop if there is a path with an infinite sequence of zero-cost actions (i.e., a sequence of *NoOp* actions). Completeness is therefore guaranteed provided the cost of every step exceeds some small positive-constant ϵ.
+ - **Time** and **Space**: The algorithm is guided by path costs rather than depth and so the runtime and space complexity cannot really be expressed in terms of *b* and *d*. Instead, let *C*<sup>\*</sup> be the cost of the optimal solution, and assume that every action costs *at least* ϵ. Then the worst-case time and space complexity is *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)*, which can be much greater than *b<sup>d</sup>*. Here we're first looking at the cost per step, and then the branching-factor is raised to that power. We add `1` because we apply the goal test when we *select nodes for expansion*. The reason we can have runtime and space complexity greater than *b<sup>d</sup>* is because the algorithm can explore large tree of small steps because exploring paths that involve large, and perhaps useful steps. When all step costs are equal, uniform-cost search is similar to BFS except that BFS stops as soon as it generates a goal whereas uniform-cost examines all nodes at the goal's depth to see if any have a lower cost. Hence, uniform-cost search does more work by expanding nodes at depth *d* unnecessarily.
+
+DFS
+---
+
+This search algorithm always expands the *deepest* node in the current frontier of the search tree. The search goes to the deepest level of the search tree, where the nodes have no successors. As those nodes are expanded, they are removed from the frontier, so then the search "backs up" to the next deepest node that still has unexplored successors. Uses a stack (LIFO queue). This means the most-recently-generated node is selected for expansion. 
+
+ - **Completeness**: The graph-search version (which avoids repeated states and redundant paths) is complete in finite state-spaces because it will eventually expand every node. The tree-search version is **not complete**; it can keep following a loop forever. The DFS tree-search algorithm can be modified at no extra memory-cost so that it checks new states against those on the path from the root to the current node. This avoids infinite loops in finite state-spaces but does not avoid the issue of redundant paths. In infinite state-spaces, both versions vail if an infinite non-goal path is encountered (e.g., Knuth's 4 problem; DFS will keep applying the same operator over and over again). 
+ - **Optimality**: Both versions are non-optimal for similar reasons. Assuming we have a search space where we have a goal node `C` on the right-subtree at some depth `d`, and a goal node `J` on the left subtree at some depth `d'` (`d' > d`). Then DFS will start by exploring the left subtree even though `C` is a goal node. Further, it would end up returning `J` as a solution even though `C` is a better solution. Hence DFS is not optimal. 
+
+
+
+
 
 
