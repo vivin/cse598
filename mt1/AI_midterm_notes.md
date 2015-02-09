@@ -266,3 +266,5 @@ f(n') = g(n') + h(n')
       = g(n) + c(n, a, n') + h(n') >= g(n) + h(n)
                                    >= f(n)
 ```
+
+The next thing we have to prove is that *whenever A*\* *selects a node `n` for expansion, the optimal path to that node has been found.*
