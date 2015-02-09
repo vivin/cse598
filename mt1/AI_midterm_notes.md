@@ -92,12 +92,12 @@ Complexity is represented in terms of three quantities:
 Comparing uninformed-search strategies
 --------------------------------------
 
-| **Criterion** | **BFS**            | **Uniform Cost**  | **DFS** | **Depth Limited** | **ID-DFS** | **Bidirectional**  |
-|---------------|--------------------|-------------------|---------|-------------------|------------|--------------------|
-|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup> |         |                   |            |                    |
-|     Time      | *O(b<sup>d</sup>)* | *O(b<sup>1+⌊C<sup>\*</sup>/ϵ⌋</sup>)* |        |                   |            |                    |
-|     Space     | *O(b<sup>d</sup>)* |                   |         |                   |            |                    |
-|    Optimal?   | Yes<sup>c</sup>    |                   |         |                   |            |                    |
+| **Criterion** | **BFS**            | **Uniform Cost**                     | **DFS** | **Depth Limited** | **ID-DFS** | **Bidirectional**  |
+|---------------|--------------------|--------------------------------------|---------|-------------------|------------|--------------------|
+|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                    |         |                   |            |                    |
+|     Time      | *O(b<sup>d</sup>)* | *O(b<sup>1+⌊C<sup>+</sup>/ϵ⌋</sup>)* |         |                   |            |                    |
+|     Space     | *O(b<sup>d</sup>)* |                                      |         |                   |            |                    |
+|    Optimal?   | Yes<sup>c</sup>    |                                      |         |                   |            |                    |
 
 BFS (Breadth-first search)
 --------------------------
