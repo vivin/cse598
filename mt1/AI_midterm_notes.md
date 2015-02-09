@@ -92,12 +92,16 @@ Complexity is represented in terms of three quantities:
 Comparing uninformed-search strategies
 --------------------------------------
 
-| **Criterion** | **BFS**            | **Uniform Cost**                     | **DFS** | **Depth Limited** | **ID-DFS** | **Bidirectional**  |
-|---------------|--------------------|--------------------------------------|---------|-------------------|------------|--------------------|
-|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                    |         |                   |            |                    |
-|     Time      | *O(b<sup>d</sup>)* | *O(b<sup>1+⌊C<sup>+</sup>/ϵ⌋</sup>)* |         |                   |            |                    |
-|     Space     | *O(b<sup>d</sup>)* |                                      |         |                   |            |                    |
-|    Optimal?   | Yes<sup>c</sup>    |                                      |         |                   |            |                    |
+| **Criterion** | **BFS**            | **Uniform Cost**                     | **DFS**            | **Depth Limited**  | **ID-DFS**         | **Bidirectional**    |
+|---------------|--------------------|--------------------------------------|--------------------|--------------------|--------------------|----------------------|
+|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                    |   No               | Yes<sup>a</sup>    | Yes<sup>a</sup>    | Yes<sup>a,d</sup>    |
+|     Time      | *O(b<sup>d</sup>)* | *O(b<sup>1+⌊C<sup>+</sup>/ϵ⌋</sup>)* | *O(b<sup>m>/sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>d/2</sup>)* |
+|     Space     | *O(b<sup>d</sup>)* | *O(b<sup>1+⌊C<sup>+</sup>/ϵ⌋</sup>)* | *O(bm)*            | *O(bl)*            | *O(bd)*            | *O(b<sup>d/2</sup>)* |
+|    Optimal?   | Yes<sup>c</sup>    | Yes                                  |   No               | No                 | Yes<sup>c</sup>    | Yes<sup>c,d</sup>    |
+
+(+ is actually supposed to be \*.)
+
+Evaluation of tree-search strategies. *b* is the branching factor; *d* is the depth of the shallowest solution; *m* is the maximum depth of the search tree; *l* is the depth limit. Superscript caveats are as follows: <sup>a</sup> coplete if *b* is finite; <sup>b</sup> complete if step costs >= ϵ for positive ϵ. <sup>c</sup> optimal if step costs are all identical; <sup>d</sup> if both directions use breadth-first search. 
 
 BFS (Breadth-first search)
 --------------------------
