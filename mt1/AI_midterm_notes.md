@@ -118,5 +118,53 @@ A simple strategy in which root node is expanded first and then all successors o
 Uniform-cost search
 -------------------
 
-When all step costs are qual, BFS is optimal because it always expands the *shallowest* unexpanded node. How about an algorithm that is optimal with any step-cost function? Instead of expanding the shallowest node, **uniform-cost search** expands the node *n* with the **lowest path-cost `g(n)`**. 
+When all step costs are qual, BFS is optimal because it always expands the *shallowest* unexpanded node. How about an algorithm that is optimal with any step-cost function? 
+
+ - Instead of expanding the shallowest node, **uniform-cost search** expands the node *n* with the **lowest path-cost `g(n)`**
+ - This is done by storing the frontier **as a priority queue** ordered by `g`. 
+ - The goal test is applied to a node when it is *selected for expansion* rather than when it is first *generated* (i.e., opposite of BFS). This is because the first goal-node that is *generated* may not necessarily be on the most-optimal path.
+ - Another test is also added to check for the case where a better path is found to a node currently on the frontier. 
+
+An example:
+
+```
+                  99
+[Sibiu] -----------------------[Fagaras]
+   \                               |
+    \                              |
+     \ 80                          |
+      \                            |
+ [Rimnicu Vilcea]                  |
+        \                          |
+         \                         |
+          \                        |
+           \ 97                    |
+            \                      |
+             \                     |
+          [Pitesti]                |
+               \                   |
+                \                  |
+                 \ 101             |
+                  \                | 211
+                   \               |
+                    \              |
+                     \             |
+                      \            |
+                       \           |
+                        \          |
+                         \         |
+                          \        |
+                           \       |
+                            \      |
+                             \     |
+                              \    |
+                               \   |
+                                \  |
+                                 \ |
+                                  \|
+                             [Bucharest]
+```
+
+The problem is to get from **Sibiu** to **Bucharest**. The successors of **Sibiu** are **Riminicu Vilcea** and **Fagaras** with path-costs `80` and `99` respectively. Since **Riminicu Vilcea** is the least-cost node, it is expanded next, which gives us **Pitesti** with a total path-cost of `80 + 97 = 177`. Now **Fagaras** is the least-cost node, and so it is expanded, giving us **Bucharest** with a cost of `99 + 211 = 310`. Now also **Bucharest** is the goal node, we keep going since we don't perform the goal test on *generated* nodes. So we will next choose **Pitesti** for expansion which adds a second path to **Bucharest** with the cost `80 + 97 + 101 = 278`. The algorithm now checks to see if this new path is better than the old one; it is and so the old one is discarded. **Bucharest** with `g`-cost `278` is now selected for expansion and then returned as a solution (because we perform the goal test when a node is selected for expansion). 
+
 
