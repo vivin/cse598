@@ -92,12 +92,12 @@ Complexity is represented in terms of three quantities:
 Comparing uninformed-search strategies
 --------------------------------------
 
-| **Criterion** | **BFS**            | **Uniform Cost**                            | **DFS**             | **Depth Limited**  | **ID-DFS**         | **Bidirectional**    |
-|---------------|--------------------|---------------------------------------------|---------------------|--------------------|--------------------|----------------------|
-|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                           |   No                | Yes<sup>a</sup>    | Yes<sup>a</sup>    | Yes<sup>a,d</sup>    |
-|     Time      | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(b<sup>m></sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>d/2</sup>)* |
-|     Space     | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(bm)*             | *O(bl)*            | *O(bd)*            | *O(b<sup>d/2</sup>)* |
-|    Optimal?   | Yes<sup>c</sup>    | Yes                                         |   No                | No                 | Yes<sup>c</sup>    | Yes<sup>c,d</sup>    |
+| **Criterion** | **BFS**            | **Uniform Cost**                            | **DFS**            | **Depth Limited**  | **ID-DFS**         | **Bidirectional**    |
+|---------------|--------------------|---------------------------------------------|--------------------|--------------------|--------------------|----------------------|
+|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                           |   No               | Yes<sup>a</sup>    | Yes<sup>a</sup>    | Yes<sup>a,d</sup>    |
+|     Time      | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(b<sup>m</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>d/2</sup>)* |
+|     Space     | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(bm)*            | *O(bl)*            | *O(bd)*            | *O(b<sup>d/2</sup>)* |
+|    Optimal?   | Yes<sup>c</sup>    | Yes                                         |   No               | No                 | Yes<sup>c</sup>    | Yes<sup>c,d</sup>    |
 
 (+ is actually supposed to be \*.)
 
