@@ -94,8 +94,8 @@ Comparing uninformed-search strategies
 
 | **Criterion** | **BFS**            | **Uniform Cost**                            | **DFS**            | **Depth Limited**  | **ID-DFS**         | **Bidirectional**    |
 |---------------|--------------------|---------------------------------------------|--------------------|--------------------|--------------------|----------------------|
-|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                           |   No               | Yes<sup>a</sup>    | Yes<sup>a</sup>    | Yes<sup>a,d</sup>    |
-|     Time      | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(b<sup>m</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>d/2</sup>)* |
+|   Complete?   | Yes<sup>a</sup>    | Yes<sup>a,b</sup>                           |   No               | No                 | Yes<sup>a</sup>    | Yes<sup>a,d</sup>    |
+|     Time      | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(b<sup>m</sup>)* | *O(b<sup>l</sup>)* | *O(b<sup>d</sup>)* | *O(b<sup>d/2</sup>)* |
 |     Space     | *O(b<sup>d</sup>)* | *O(b*<sup>*1+⌊C*<sup>\*</sup>*/ϵ⌋*</sup>*)* | *O(bm)*            | *O(bl)*            | *O(bd)*            | *O(b<sup>d/2</sup>)* |
 |    Optimal?   | Yes<sup>c</sup>    | Yes                                         |   No               | No                 | Yes<sup>c</sup>    | Yes<sup>c,d</sup>    |
 
@@ -176,11 +176,41 @@ DFS
 
 This search algorithm always expands the *deepest* node in the current frontier of the search tree. The search goes to the deepest level of the search tree, where the nodes have no successors. As those nodes are expanded, they are removed from the frontier, so then the search "backs up" to the next deepest node that still has unexplored successors. Uses a stack (LIFO queue). This means the most-recently-generated node is selected for expansion. 
 
- - **Completeness**: The graph-search version (which avoids repeated states and redundant paths) is complete in finite state-spaces because it will eventually expand every node. The tree-search version is **not complete**; it can keep following a loop forever. The DFS tree-search algorithm can be modified at no extra memory-cost so that it checks new states against those on the path from the root to the current node. This avoids infinite loops in finite state-spaces but does not avoid the issue of redundant paths. In infinite state-spaces, both versions vail if an infinite non-goal path is encountered (e.g., Knuth's 4 problem; DFS will keep applying the same operator over and over again). 
+ - **Completeness**: The graph-search version (which avoids repeated states and redundant paths) is complete in finite state-spaces because it will eventually expand every node. The tree-search version is **not complete**; it can keep following a loop forever. The DFS tree-search algorithm can be modified at no extra memory-cost so that it checks new states against those on the path from the root to the current node. This avoids infinite loops in finite state-spaces but does not avoid the issue of redundant paths. In infinite state-spaces, both versions fail if an infinite non-goal path is encountered (e.g., Knuth's 4 problem; DFS will keep applying the same operator over and over again). 
  - **Optimality**: Both versions are non-optimal for similar reasons. Assuming we have a search space where we have a goal node `C` on the right-subtree at some depth `d`, and a goal node `J` on the left subtree at some depth `d'` (`d' > d`). Then DFS will start by exploring the left subtree even though `C` is a goal node. Further, it would end up returning `J` as a solution even though `C` is a better solution. Hence DFS is not optimal. 
+ - **Time**: The time complexity for DFS graph-search is bounded by the size of the state-space (which could be infinite). A DFS tree-search however, may end up generating all of the *O(b<sup>m</sup>)* nodes in the search tree, where *m* is the maximum depth of any node (so this can be much bigger than the size of the state space). Also, *m* itself can be much larger than *d*, and is infinite if the tree is unbounded. For an example, consider a binary tree where the goal node is the deepest and right-most node. In this case, DFS will generate *all* nodes before it gets to the goal node. Even if the goal node is at depth *d* which is much smaller than *m*, the time-complexity is still dominated by the fact that it is still exploring all the other nodes, and hence we still end up with *O(b<sup>m</sup>)*.
+ - **Space**: The space complexity is the reason we consider DFS. There is no advantage for a graph search, but in a DFS tree search, we only need to store a single path from the root to a leaf node, along with any remaining, unexpanded sibling-nodes for each node in the path. Once a node has been fully expanded, it can be removed from memory as soon as all of its descendants have been fully explored. Hence, the storage is only *O(bm)* for a state space with branching-factor *b* and maximum depth *m*. 
 
+Depth-limited DFS
+-----------------
 
+DFS fails in infinite search-spaces. This failure can be alleviated by using a variation called depth-limited DFS. In this algorithm, DFS is supplied with a predetermined depth-limit *l*. This means that nodes at depth *l* are treated as if they have no successors. This solves the infinite path problem. However, we have an additional source of incompleteness if we chose *l* < *d* (i.e., the shallowest goal is beyond the depth limit. This usually happens when *d* is unknown). Depth-limited DFS is also nonoptimal if we chose *l* > *d* (for reasons of nonoptimality in DFS in general). 
 
+ - **Completeness**: Incomplete if *l* < *d* (but also incomplete in general).
+ - **Optimality**: Nonoptimal when *l* > *d*.
+ - **Time**: *O(b<sup>l</sup>)*.
+ - **Space**: *O(bl)*.
+
+ID-DFS
+------
+
+This is a general strategy used in combination with DFS tree search that finds the best depth limit. The algorithm does this by gradually increasing the depth (first 0, then 1, then 2, and so on) until a node is found. This occurs when the depth limit reaches *d*, the depth of the shallowest goal-node. Iterative deepening combines the benefits of DFS and BFS.
+
+ - **Completeness**: It is complete if *b* is finite.
+ - **Optimal**: It is optimal if all step-costs are identical. 
+ - **Time**: *O(b<sup>d</sup>)*.
+ - **Space**: *O(bd)*.
+
+This can seem wasteful because states are generated multiple times. But it turns out this is not too costly, this is because in a search tree with the same (or nearly the same) branching factor at each level, most of the nodes are in the bottom level and so it does not matter that the upper levels are geenerated multiple times. In an ID-DFS, the nodes at depth *d* are generated once, the ones are depth *d - 1* are generated twice, and so on. Hence we have:
+
+N(IDS) = (d)b + (d - 1)b<sup>2</sup> + ... + (1)b<sup>d</sup>, which is *O(b<sup>d</sup>)*.
+
+There is an extra cost of generating the upper levels multiple times, but it is not too large. For example, with *b* set to `10` and *d* set to `5`, we have:
+
+N(IDS) = 50 + 400 + 3,000 + 20,000 + 100,000 = 123,450
+N(BFS) = 10 + 100 + 1,000 + 10,000 + 100,000 = 111,110
+
+**In general, ID-DFS is the preferred uninformed-search method when the search space is large and the depth of the solution is not known.**
 
 
 
