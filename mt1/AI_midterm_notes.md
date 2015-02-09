@@ -106,4 +106,17 @@ Evaluation of tree-search strategies. *b* is the branching factor; *d* is the de
 BFS (Breadth-first search)
 --------------------------
 
+A simple strategy in which root node is expanded first and then all successors of the root node are expanded next, then *their* successors, and so on. In general, all nodes are expanded at a given depth in the search tree, before any nodes at the next level are expanded. This means that the *shallowest* unexpanded node is chosen for expansion. To do this we use a FIFO queue (i.e., regular queue). **The goal test is applied to each node when it is generated rather than when it is selected for expansion**; this is because if we applied the test when it is selected for expansion, we would have to expand the whole layer of nodes at depth *d* before the goal was detected, which makes the runtime complexity *O(b<sup>d + 1</dup>)*. The algorithm discards any new path to a state already in the frontier or explored set (any such much must be *at least as deep* as the one already found). Hence BFS always has the *shallowest* path to every node on the frontier.
+
+ - **Completeness**: BFS is complete. If the shallowest goal-node is at some finite-depth *d*, BFS will eventually find it after generating all shallower-nodes (provided branching-factor *b* is finite). 
+ - **Optimality**: BFS is optimal, assuming that the path-cost is a non-decreasing function of the depth of the node. This is easily seen if all actions have the same cost. 
+ - **Time**: We generate *b<sup>h</sup>* nodes at each level *h*. So the root generates *b*, and then each of those generate *b*, which leads to *b<sup>2</sup>* at the second level, and so on. Hence in general, we have *O(b<sup>d</sup>)*.
+ - **Space**: We store every expanded node in the *explored* set. This means that every node remains in memory, which gives us *O(b<sup>d - 1</sup>)* in the *explored* set. The *frontier* set then has *O(b<sup>d</sup>)* nodes. This means that the size of the *frontier* dominates, which gives us a space complexity of *O(b<sup>d</sup>)*.
+
+**Memory requirements are a bigger problem for BFS than execution time.** That is, we will face the issue of running out of memory, long before the face the issue of waiting way too long for a solution. 
+
+Uniform-cost search
+-------------------
+
+When all step costs are qual, BFS is optimal because it always expands the *shallowest* unexpanded node. How about an algorithm that is optimal with any step-cost function? Instead of expanding the shallowest node, **uniform-cost search** expands the node *n* with the **lowest path-cost `g(n)`**. 
 
