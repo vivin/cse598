@@ -256,3 +256,13 @@ The first condition required for optimality is that `h(n)` is an **admissible he
 `h(n) <= c(n, a, n') + h(n')`
 
 This is a form of the general **triangle inequality**. 
+
+**Optimality of A**\*: The tree-search version of A\* is optimal if `h(n)` is admissible, while the graph-search version is optimal if `h(n)` is consistent. 
+
+How is A\* optimal? First, *if `h(n)` is consistent, then the values of `f(n)` along any path are nondecreasing.* The proof follows directly from the definition of consistency. Supposed `n'` is a successor of `n`; then `g(n`) = g(n) + c(n, a, n')` for some action `a` and we have:
+
+```
+f(n') = g(n') + h(n')
+      = g(n) + c(n, a, n') + h(n') >= g(n) + h(n)
+                                   >= f(n)
+```
