@@ -118,7 +118,7 @@ A simple strategy in which root node is expanded first and then all successors o
 Uniform-cost search
 -------------------
 
-When all step costs are qual, BFS is optimal because it always expands the *shallowest* unexpanded node. How about an algorithm that is optimal with any step-cost function? 
+When all step costs are equal, BFS is optimal because it always expands the *shallowest* unexpanded node. How about an algorithm that is optimal with any step-cost function? 
 
  - Instead of expanding the shallowest node, **uniform-cost search** expands the node *n* with the **lowest path-cost `g(n)`**
  - This is done by storing the frontier **as a priority queue** ordered by `g`. 
@@ -289,4 +289,160 @@ What happens if one fails to get a single, "clearly-best" heuristic from the one
 
 *h(n)* = max{*h<sub>1</sub>(n)*, ..., *h<sub>m</sub>(n)*}
 
+Local Search
+============
 
+In many problems, path to the goal is irrelevant (e.g., 8 queens problem). What we usually care about is the final solution. Hence, we don't need to store the path to the solution, but can simply explore the solution space to either maximize/minimize the objective function (depending on whether we are maximizing payoff or minimizing cost). 
+
+Hill-climbing search
+--------------------
+
+This is a simple search algorithm that simply loops and moves in the direction of increasing value (uphill). It will terminate when it reaches a peak (i.e., a point where none of the neighbors have a higher value). This algorithm is also known as **greedy local search**. Unfortunately, hill climbing will get stuck for the following reasons:
+
+ - **Local maxima**
+ - **Ridges** (sequence of local maxima that is very difficult for greedy algorithms to navigate)
+ - **Plateaux** (flat area).
+
+There are variations to get around these difficulties:
+
+ - **Stochastic hill climing** chooses at random from among the uphill moves; the probability of selection can vary with the steepness of the uphill move. This usually converges more slowly than steepest ascent, but in some state landscapes, it finds better solutions.
+ - **First-choice hill climbing** implements stochastic hill-climbing by generating successors randomly until one is generated that is better than the current state. This is a good strategy when when a state has many (e.g., thousands) of successors.
+ - **Random-restart hill climbing**: The above algorithms are incomplete; they often fail to find a goal when one exists because they can get stuck on a local maxima. In random-restart, we conduct a series of hill-climbing searches from randomly-generated initial states until a goal is found.
+
+Simulated annealing
+-------------------
+
+The regular hill-climbing algorithm *never* meaks "downhill" moves towards states with a lower value (or higher cost). Hence, it is guaranteed to be incomplete. A purely-random walk would allow us to move both uphill and downhill, but is very inefficient. How could we combine the two? We can do this with **simulated annealing**. The innermost loop of the simulated-annealing algorithm is quite similar to hill climbing, except instead of choosing the *best* move, it chooses a *random* move. If the move improves the situation, it is always accepted. Otherwise (i.e., if the move is "bad"), the algorithm accepts the move with some probability less than 1. The probability decreases exponentially with the "badness" of the move (i.e., the amount of Δ*E* by which the evaluation is worsened), and also decreases as the "temperature" *T* goes down. This means that "bad" moves are more likely to be allowed at the start when *T* is high, and they become more unlikely as *T* decreases. If the *schedule* lowers *T* slowly enough, the algorithm will find a global optimum with probability approaching 1.
+
+Local beam search
+-----------------
+
+The **local beam search** algorithm keeps track of *k* states rather than just one state. It begins with *k* randomly-generated states. At each step, all successors of all *k* states are generated. If any one of those is a goal, the algorithm halts. Otherwise, it selects the *k* best successors from the complete list and repeats. This may look like we are simply running *k* random restarts in parallel. However, in random-restart each search process runs independently of the others. *In a local beam-search, useful information is passed among the parallel search-threads*. This means the algorithm abandons unfruitful searches and moves towards the area where most progress is being made.
+
+Adversarial Search
+==================
+
+Algorithms that cover **competitive** environments in which the agents' goals are in conflict.
+
+MINIMAX algorithm
+-----------------
+
+Assume there are two players MAX and MIN. MAX always chooses a move that maximizes the payoff, whereas MIN will always choose a move that will minimize MAX's payoff. So here the strategy is built up assuming that each player plays optimally. Given a game tree, the optimal strategy can be determined from the **minimax value** of each node, which is written as `MINIMAX(n)`. 
+
+```
+MINIMAX(s) = UTILITY(s) if TERMINAL-TEST(s)
+           = max(a in Actions(s)) MINIMAX(RESULT(s, a)) if PLAYER(s) = MAX
+           = min(a in Actions(s)) MINIMAX(RESULT(s, a)) if PLAYER(s) = MIN
+```
+
+The **minimax algorithm** computes the minimax decision from the current state. It uses a simple, recursive computation of minimax values of each successor state, directly implementing the defining equations. The recursion proceeds all the way down to the leaves of the tree, and then the minimax values are **backed up** through the tree as the recursion unwinds. 
+
+Assume the following tree:
+
+![minimax](http://imgur.com/sXrSXr5)
+
+The recursion proceeds all the way to three bottom-left nodes, and here it uses the `UTILITY` function on them to discover that their values are 3, 12, and 8. Since the level above is where MIN would play, it takes the minimum of the three values and returns it as the backed-up value of node B. A similar process gives the backed-up values for nodes C and D. Since the root is where MAX plays, we take the maximum of the values, which gives us 3, which also ends up being the backed-up value of the root node.
+
+The minimax algorithm performs a complete depth-first exploration of the game tree. If the maximum depth of the tree is *m* and there are *b* legal moves at each point, then the time complexity of the minimax algorithm is *O(b<sup>m</sup>)*. The space complexity is *O(bm)* for an algorithm that generates all actions at once, or *O(m)* for an algorithm that generates them one at a time.
+
+Alpha-Beta Pruning
+------------------
+
+With minimax search, the number of game states it has to examine is exponential in the depth of the tree. We cannot eliminate the exponent, but we can cut it in half by **pruning**. The idea is that we can compute the correct minimax decision without looking at every node in the game tree. The general principle is this: consider a node *n* somewhere in the tree, such that the player has a chance of moving to that node. If the player has a better choice *m* either at the parent of node *n*, or at any choice point further up, then *n* will never be reached in actual play. So once we have found out enough about *n* (by examining some of its descendants) to reach this conclusion, we can prune it. 
+
+The algorithm gets its name from the following two parameters that describe the bounds on the backed-up values that appear anywhere along the path:
+
+ - α = the value of the best (i.e., highest-value) choice we have found so far at any choice point along the path for MAX.
+ - β = the value of the best (i.e., lowest-value) choice we have found so far at any choice point along the path for MIN.
+
+To see it in action, consider this tree:
+
+```
+                     A
+                   / | \
+                  /  |  \
+                 /   |   \
+                /    |    \
+               /     |     \
+              /      |      \
+             /       |       \
+            B        C        D
+           /|\      /|\      /|\
+          / | \    / | \    / | \
+         /  |  \  /  |  \  /  |  \        
+        11  9 13 7   5 14 2  10   3
+```
+
+First we will go all the way down the left sub-tree to find 11, which is initially the lowest-value at B (MIN). On examining other nodes, we find that 9 is actually the lowest value. So B goes through the following value changes:
+
+ - B: [-∞, 11] -> [-∞, 9] -> [9, 9]
+
+Since the MIN value at B is 9, we know that A (MAX) can currently choose a value that is at least 9. So we end up with the following values:
+
+ - A: [9, +∞]
+ - B: [9, 9]
+
+Now we will walk through the next subtree. Here, we first find 7. So the values are:
+
+ - A: [9, +∞]
+ - B: [9, 9]
+ - C: [-∞, 7]
+
+If we explore any more of C's children, they can only have values that are lesser than equal to 7, because MIN at C will choose the smallest value. This means that we will never get a value that is higher than 7. We also know that MAX chooses the highest value. The option that MAX has at A is 9, so it will **never** choose C! This means that we don't have to explore any other nodes under C.
+
+Now we will explore D. Here, we first find 2. So the values are:
+
+ - A: [9, +∞]
+ - B: [9, 9]
+ - C: [-∞, 7]
+ - D: [-∞, 2]
+
+For the same reasons as in the case of C, MAX will never pick D because 2 is smaller than its best choice of 9. This means that we don't have to explore any of D's other children either. Hence, we finally end up with A: [9, 9] which means we play 9. 
+
+Let's also see it in action with the tree rotated:
+
+```
+                     A
+                   / | \
+                  /  |  \
+                 /   |   \
+                /    |    \
+               /     |     \
+              /      |      \
+             /       |       \
+            B        C        D
+           /|\      /|\      /|\
+          / | \    / | \    / | \
+         /  |  \  /  |  \  /  |  \        
+        3  10  2 14  5  7 13  11 9
+```
+
+First we will go all the way down the left sub-tree. B ends up going through the following value changes:
+
+ - B: [-∞, 3] -> [-∞, 2] -> [2, 2]
+
+Since the MIN value at B is 2, we know that A (MAX) can only choose a value that is at least 2. So we end up with the following values:
+
+ - A: [2, +∞]
+ - B: [2, 2]
+
+Now we will walk through C's subtree. Here we first find 14. This is better than the current best-choice of 2, so we have the following values:
+
+ - A: [2, 14]
+ - B: [2, 2]
+ - C: [-∞, 14]
+
+We then find 5 and 7 under C, which means we end up with the following:
+
+ - A: [2, 14] -> [2, 5]
+ - B: [2, 2]
+ - C: [-∞, 14] -> [-∞, 5] -> [5, 5]
+
+Now we look at D:
+
+ - A: [2, 5] -> [2, 13] -> [2, 11] -> [2, 9] -> [9, 9]
+ - B: [2, 2]
+ - C: [5, 5]
+ - D: [-∞, 13] -> [-∞, 11] -> [-∞, 9] -> [9, 9]
+
+So we play 9. What is interesting is that the rotated tree forced us to examine every-single node, which means we pretty much ended up with minimax.
