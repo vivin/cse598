@@ -1,7 +1,7 @@
 Agents
 ======
 
- - Agent perceives its **environment** therough **sensors** and acting upon that environment through **actuators**. 
+ - Agent perceives its **environment** therough **sensors** and acts upon that environment through **actuators**. 
  - A **percept** refers to the agent's perceptual inputs at any given instant. 
  - An agent's **percept sequence** is the complete history of everything the agent has ever perceived.
  - A **performance measure** evaluates any given sequence of environment states. It captures the notion of desirability.
