@@ -339,7 +339,7 @@ The **minimax algorithm** computes the minimax decision from the current state. 
 
 Assume the following tree:
 
-![minimax](http://imgur.com/sXrSXr5)
+![minimax](http://imgur.com/sXrSXr5.png)
 
 The recursion proceeds all the way to three bottom-left nodes, and here it uses the `UTILITY` function on them to discover that their values are 3, 12, and 8. Since the level above is where MIN would play, it takes the minimum of the three values and returns it as the backed-up value of node B. A similar process gives the backed-up values for nodes C and D. Since the root is where MAX plays, we take the maximum of the values, which gives us 3, which also ends up being the backed-up value of the root node.
 
