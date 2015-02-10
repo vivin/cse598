@@ -85,7 +85,7 @@ Measuring problem-solving performance
 
 Complexity is represented in terms of three quantities:
 
- - `b`: The **bgranching factor**, or maximum number of successors of any node.
+ - `b`: The **branching factor**, or maximum number of successors of any node.
  - `d`: The **depth** of the *shallowest* goal node.
  - `m`: The **maximum length** of any path in the state space. 
 
