@@ -1,9 +1,9 @@
 Introduction and Decision Trees
 ===============================
 
-**Unsupervised Learning**: The agent learns patterns in the input even though no explicit feedback is supplied. Most common unsupervised learning-task is clustering: detecting potentially useful clusters of input examples. For example, a taxi agent might gradually develop a concept of "good traffic days" and "bad traffic days" without ever being given labeled examples.
-**Reinforcement learning**: The agent learns from a series of reinforcements - rewards or punishments. 
-**Supervised learning**: The agent observes some example input - output pairs and learns a function that maps from input to output. The outputs can come from a teacher who gives the agent information about what the output is. The output can also come from the agent's percepts and the environment ends up being the teacher.
+ - **Unsupervised Learning**: The agent learns patterns in the input even though no explicit feedback is supplied. Most common unsupervised learning-task is clustering: detecting potentially useful clusters of input examples. For example, a taxi agent might gradually develop a concept of "good traffic days" and "bad traffic days" without ever being given labeled examples.
+ - **Reinforcement learning**: The agent learns from a series of reinforcements - rewards or punishments. 
+ - **Supervised learning**: The agent observes some example input - output pairs and learns a function that maps from input to output. The outputs can come from a teacher who gives the agent information about what the output is. The output can also come from the agent's percepts and the environment ends up being the teacher.
 
 Noise and lack of labels create a continuum between supervised and unsupervised learning. 
 
