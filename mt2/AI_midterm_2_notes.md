@@ -169,7 +169,7 @@ Multivariate linear regression
 We can extend the univariate linear-regression to solve **multivariate linear-regression** problems. In the multivariate case, each example **x**j is an n-element vector. Hence:
 
 ```
-hsw(xj) = w0 = w1xj,1 + ... + wnxj,n = w0 + sigma(to j, wixj,i)
+hsw(xj) = w0 + w1xj,1 + ... + wnxj,n = w0 + sigma(to j, wixj,i)
 ```
 
 The `w0` term (intercept) stands out as different. We can fold it into this equation by inventing a dummy input-attribute, `xj,0` which is always 1. Then `h` is just the dot-product of the weights and the input vector, or the matrix product of the transpose of the weights and the input vector:
