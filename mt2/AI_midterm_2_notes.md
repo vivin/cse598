@@ -56,6 +56,18 @@ Hence for a boolean variable, it is just `B(q) = -(qlog2q + (1 - q)log2(1-q))`. 
 
 Now testing on a single attribute will only give us part of the bits of `B(p / (p + n))`. In the restaurant example, testing one attribute only gives us part of the information of 1 bit (of entropy; p = n = 6 so B = 1). We can measure exactly how much by looking at the entropy remaining *after* the attribute test. 
 
+If you have an attribute *A* with *d* distinct values, it divides the training set of examples *E* into subses *E1*, ... *Ed*. Each subset *Ek* has *pk* positive examples and *nk* negative examples. If we go along that particular branch, we will need an additional `B(pk/pk + nk))` bits of information. A randomly chosen example from the training set has the *k*th value for the attribute with probability (*pk* + *nk*)/(*p* + *n*), and so the expected entropy remaining after testing attribute A is:
+
+```
+Remainder(A) = sum(k from 1 to d, (pk + nk)/(p + n) * B(pk / pk + nk)
+```
+
+The **information gain** from the attribute test on A is the expected reduction in entropy:
+
+```
+Gain(A) = B(p / p + n) - Remainder(A)
+```
+
 **Generalization and overfitting**
 
 An algorithm may accurately predict every case according to the test data, but it may not be general. This is called overfitting. For decision trees, we can use **decision tree pruning** to combat overfitting. Pruning works by eliminating nodes in the decision tree that are not clearly relevant. We start with a full tree, and then look at a test node that has only leaf nodes as descendants. If the test appears to be irrelevant (detecting only noise in the data), we eliminate the test, replacing it with a leaf node. This process is repeated, considering each test with only leaf descendants, until each one has either been pruned or accepted as is. 
@@ -88,7 +100,7 @@ What is "best fit"? First we define the **error rate** of a hypothesis as the pr
 
 The simplest approach is **holdout cross-validation**. Randomly split the available data into a training set from which the learning algorithm produces `h` and a test set on which the accuracy of `h` is evaluated. This has the disadvantage that it fails to use all of the available data (pg 708). 
 
-Another technique is *k*-**fold cross-validation**. Each example serves double duty - as training data and test data. First we split the data into *k* equal subsets. We then perform *k* rounds of learning; on each round, *1/k* of the data is held out as a test set and the remaining examples are used as training data. The average test set score of the *k* rounds should then be a better extimate than a single score. Popular values for *k* are 5 and 10. This takes us 5-10 times longer to run but is statistically more-accurate. The extreme is *k = n* or **leave-one-out cross-validation** or **LOOCV**.
+Another technique is *k*-**fold cross-validation**. Each example serves double duty - as training data and test data. First we split the data into *k* equal subsets. We then perform *k* rounds of learning; on each round, *1/k* of the data is held out as a test set and the remaining examples are used as training data. The average test set score of the *k* rounds should then be a better estimate than a single score. Popular values for *k* are 5 and 10. This takes us 5-10 times longer to run but is statistically more-accurate. The extreme is *k = n* or **leave-one-out cross-validation** or **LOOCV**.
 
 **Peeking** causes the test results to be invalidated. Users can inadvertently **peek** at the test data. If you select the hypothesis *on the basis of its test set error rate*, you have peeked.
 
@@ -118,7 +130,7 @@ A univariate linear function with input `x` and output `y` has the form:
 y = w1x + w0
 ```
 
-Where `w0` and `w1` are real-valued coefficients to be learned. We use the letter `w` because we can think of the coefficients as **weights**; the value of `y` is changed by changing the relative weight of one term to another. We can defined **`w`** to be the vector `[w0, w1]` and define the hypothesis function:
+Where `w0` and `w1` are real-valued coefficients to be learned. We use the letter `w` because we can think of the coefficients as **weights**; the value of `y` is changed by changing the relative weight of one term to another. We can define **`w`** to be the vector `[w0, w1]` and define the hypothesis function:
 
 ```
 hw(x) = w1x + w0
