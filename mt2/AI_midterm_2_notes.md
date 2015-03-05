@@ -50,7 +50,7 @@ We can **evaluate** the accuracy of a learning algorithms with a **learning curv
 
 **Choosing attribute tests**
 
-We need a formal measure of "fairly good" and "really useless". We can do this with the notion of information gain, which is defined in terms of **entropy**. (Entropy formula pg 704. Entropy is the sum of the probability of each value vk of the random variable V multipled by the inverse of the log (base 2) probability of that variable (vk). 
+We need a formal measure of "fairly good" and "really useless". We can do this with the notion of information gain, which is defined in terms of **entropy**. (Entropy formula pg 704. Entropy is the sum of the probability of each value vk of the random variable V multipled by the log (base 2) of the inverse probability of that variable (vk). 
 
 Hence for a boolean variable, it is just `B(q) = -(qlog2q + (1 - q)log2(1-q))`. Since a boolean variable can only have two values. The probability of one value is always 1 minus probability of the other. So in the case of the decision tree, we can look at the entropy of the goal attribute on the whole set. We can simply look at one example, the positive example, since the formula accounts for the negative example as well `(1 - q)`. So we can simply calculate `H(Goal)`, which is just `B(p / (p + n))` (i.e., we see the percentage of how many times the positive example happens in the example set). 
 
