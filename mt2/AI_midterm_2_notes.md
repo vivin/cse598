@@ -361,30 +361,30 @@ Here we are given a training set of N examples, and a class of learning models (
 Precision and Recall
 --------------------
 
-Precision is the number of correctly classified instances for class X divided by the total number of instances the algorithm classified for class X.
-Recall is the number of correctly classified instances for class X divided by the total number of instances of class X in the *test data*. 
+ - Precision is the number of correctly classified instances for class X divided by the total number of instances the algorithm classified for class X.
+ - Recall is the number of correctly classified instances for class X divided by the total number of instances of class X in the *test data*. 
 
 Another way: recall is a measure of how many of the relevant documents were retrieved, while precision is a measure of how many of the retrieved documents were relevant.
 
 Given,
 
-D = number of documents retrived.
-R = number of relevant documents retrieved
-N = number of relevant documents in the collection.
+ - D = number of documents retrived.
+ - R = number of relevant documents retrieved
+ - N = number of relevant documents in the collection.
 
-Recall = R / N
-Precision = R / D
+ - Recall = R / N
+ - Precision = R / D
 
 Let's have an exacmple where we have 100 documents, 30 of which are relevant to our query. 
 
-Algorithm #1 retrieves all 100. So Recall = 100%, and Precision = 30%. So it did retrieve all the documents, but also a bunch of irrelevant ones. A person has to manually inspect these documents.
-Algorithm #2 retrieves 70 documents, including all 30 revelant documents. Recall = 100%, Precision = 70%. This is a little better. 
-Algorithm #3 retrieves 60 documents, including 20 relevant. Recall = 20 / 30 = 67%, Precision = 20 / 50 = 40%. 
+ - Algorithm #1 retrieves all 100. So Recall = 100%, and Precision = 30%. So it did retrieve all the documents, but also a bunch of irrelevant ones. A person has to manually inspect these documents.
+ - Algorithm #2 retrieves 70 documents, including all 30 revelant documents. Recall = 100%, Precision = 70%. This is a little better. 
+ - Algorithm #3 retrieves 60 documents, including 20 relevant. Recall = 20 / 30 = 67%, Precision = 20 / 50 = 40%. 
 
 Another one:
 
-P = N(relevant items retrieved) / N(total retrieved) = P(relevant | retrieved)
-R = N(relevant items retrieved) / N(total relevant) = P(retrieved | relevant)
+ - P = N(relevant items retrieved) / N(total retrieved) = P(relevant | retrieved)
+ - R = N(relevant items retrieved) / N(total relevant) = P(retrieved | relevant)
 
 Which one is important depends on the circumstances. A typical web surfer looking for documents would like every result on the first page to be relevant (high precision) but not have the interest in knowing, let alone looking at every document that is relevant.
 
