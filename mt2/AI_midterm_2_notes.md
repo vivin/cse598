@@ -392,3 +392,247 @@ In contrast, various professional searchers (paralegals, intelligence analysts) 
 
 You can always get a recall of 1 (but very low precision) by retrieving all documents for all queries. Recall is a non-decreasing function of the number of documents retrieved.
 On the other hand, precision usually decreases as the number of documents retrieved is increased.
+
+Probability Theory
+==================
+
+Agents need to handle **uncertainty**, whether due to partial observability, nondeterminism, or a combination of the two. We can use probability theory for this.
+
+The set of all possible worlds is the **sample space**. OMEGA (uppercase omega) is used to refer to the sample space, and omega (lowercase omega) refers to the elements of the space.
+
+A fully specified **probability model** associates a numerical probability *P*(omega) with each possible world. The total probability of the set of possible worlds is 1:
+
+```
+0 <= P(omega) <= 1 for every omega and sum(for every omega in OMEGA, P(omega)) = 1
+```
+
+Probabilistic assertions and queries are not usually about particular possible worlds, but sets of them. For example, we might be interested in the cases where two dice add up to 11. In probability theory, these sets are called **events**. In AI, the sets are always described by **propositions** in a formal language. The probability associated with a proposition is defined to be the sum of pobabilities of the worlds in which it holds:
+
+```
+For any proposition PHI, P(PHI) = sum(for every omega in PHI, P(omega))
+```
+
+Probabilities such as *P*(*Total* = 11) and *P*(*doubles*) are called **unconditional** or **prior probabilities**. In other cases we are interested in the **conditional** or **posterior** probability. For example *P*(*doubles* | *Die1* = 5). Conditional probabilities are defined in terms of unconditional probabilities as follows:
+
+**Definition of Conditional Probability**:
+```
+P(a | b) = P(a AND b) / P(b)
+```
+
+**Conditional Probability in the form of the Product Rule**
+```
+P(a AND b) = P(a | b)P(b)
+```
+
+Variables in probability theory are called **random variables** and their names begin with an uppercase letter. Every random variable has a **domain** - the set of possible values it can take on. For example, a Boolean random variable can take the values `{true, false}`. The proposition that doubles are rolled can be written as `Doubles = true`.
+
+By convention, propositions of the form `A = true` are simply abbreviated as `a` whereas `A = false` is abbreviated as `NOT a`. 
+
+Variables can have infinite domains as well. For any variable with an ordered domain, inequalities are allowed as well such as NumberOfAtomsInUniverse >= 10^70.
+
+Sometimes we will want to talk about the probabilities of all the possible values of a random variable. We could write:
+
+ - *P*(Weather = sunny) = 0.6
+ - *P*(Weather = rain) = 0.1
+ - *P*(Weather = cloudy) = 0.29
+ - *P*(Weather = snow) = 0.01
+
+But as an abbreviation, we can have:
+
+ - **P**(Weather) = <0.6, 0.1, 0.29, 0.01>
+
+The bold **P** indicates that the result is a vector of numbers, where we assume a pre-defined ordering on the domain of *Weather*. We say that the **P** statement defines a **probability distribution** for the random variable *Weather*. The **P** notation is also used for conditional distributions: **P**(*X* | *Y*) gives the values of *P*(*X* = *xi* | *Y* = *yi*) for each possible *i*, *j* pair.
+
+For continuous variables, it is not possible to write out the entire distribution as a vector, because there are infinitely many values. Instead, we can define the probability that a random variable takes on some value *x* as a parameterizing function of *x*. For example:
+
+*P*(*NoonTemp* = *x*) = *Uniform*\[*18C*, *26C*\](*x*)
+
+expresses the belief that the temperature at noon is distributed uniformly between 18 and 26. We call this function a **probability density function**.
+
+Saying that the probability density is uniform from 18C to 26C means that there is a 100% chance that the temperature will fall somewhere in that 8C-wide region and a 50% chance that it will fall in any 4C-wide region, and so on. (pg 487)
+
+In addition to distributions on single variables, we need notation for distributions on multiple cariables. Commas are used for this. For example, **P**(*Weather*, *Cavity*) denotes the probabilities of all combinations of the values of *Weather* and *Cavity*. This is called the **joint probability distribution**. We can mix variables with and without values; **P**(*sunny*, *Cavity*) would be a two-element vector giving the probabilities of a sunny day with a cavity and a sunny day with no cavity. The **P** notation makes certain expressions much more concise that they otherwise might be. For example, the product rules for all possible values of *Weather* and *Cavity* can be written as a single equation:
+
+**P**(*Weather*, *Cavity*) = **P**(*Weather* | *Cavity*)**P**(*Cavity*)
+
+This is much more concise than writing 4 x 2 = 8 equations. 
+
+As a degenerate case, **P**(*sunny*, *cavity*) has no variables and thus is a one-element vector that is the probability of a sunny day with a cavity, which could also be written as *P*(*sunny*, *cavity*) or *P*(*sunny* AND *cavity*). We will sometimes use **P** notation to derive results about invidividual *P* values, and when we say **P**(*sunny*) = 0.6, it is really an abbreviation for "**P**(*sunny*) is the one-element vector <0.6>, which means that *P*(*sunny*) = 0.6."
+
+A probability model is completely determined by the joint distribution for all of the random variables - this is the **full joint probability distribution**. For example, if the random variables are *Cavity*, *Toothache*, and *Weather*, then the full joint distribution is given by **P**(*Cavity*, *Toothache*, *Weather*). 
+
+Probability axioms and their reasonableness
+-------------------------------------------
+
+**Inclusion-exclusion principle**
+```
+P(a OR b) = P(a) + P(b) - P(a AND b)
+```
+
+Inference Using Full Joint Distributions
+----------------------------------------
+
+The method of **probabilistic inference** is the computation of posterior probabilities for query propositions given observed evidence. 
+
+A particularly common task is to extract the distribution over some subset of variables or a single variable. For example, adding the entries (pg 492 fig 13.3) in the first row gives the unconditional or **marginal probability** of *cavity*:
+
+*P*(*cavity*) = 0.108 + 0.012 + 0.072 + 0.008 = 0.2
+
+This process is called **marginalization** or **summing out**, because we sum up the probabilities for each possible value of the other variables, thereby taking them out of the equation. We can write the following general marginalization rule for any sets of variables **Y** and **Z**:
+
+**P**(**Y**) = sum(for every **z** in **Z**, **P**(**Y**, **z**))
+
+In our example, we basically did:
+
+**P**(*Cavity*) = sum(for every **z** in {*Catch*, *Toothache*}, **P**(*Cavity*, **z**))
+
+A variant of this rule involves conditional probabilities instead of joint probabilities, using the product rule:
+
+**P**(**Y**) = sum(over **z**, **P**(**Y** | **z**)*P*(**z**))
+
+("over **z**" is just shorthand for "for every **z** in **Z**")
+
+This rule is called **conditioning**. Marginalization and conditioning turn out to be useful rules for all kinds of derivations involving probability expressions.
+
+Conditional probabilities can be found by first using the equation:
+
+*P*(*a* | *b*) = *P*(*a* AND *b*) / *P*(*b*)
+
+For **P**(*Cavity* | *toothache*), we basically have *P*(*cavity* | *toothache*) + *P*(NOT *cavity* | *toothache*). Both will have as denominator *P*(*toothache*), which remains constant no matter what value of *Cavity* we calculate. This means it ends up being a **normalization** constant for the distribution **P**(*Cavity* | *toothache*), ensuring that it adds up to 1. We will use *alpha* to denote such constants. Hence we can write:
+
+**P**(*Cavity* | *toothache*) = *alpha* * **P**(*Cavity*, *toothache*) = *alpha* * \[**P**(*Cavity*, *toothache*, *catch*) + **P**(*Cavity*, *toothache*, NOT *catch*)\]
+
+We end up with *alpha* * <0.12, 0.08> = <0.6, 0.6>.
+
+Here, even if we don't know *P*(*toothache*), we can forget about 1/*P*(*toothache*) and just add up the values getting 0.12 and 0.08. The relative proprtions are right and so we can nromalize by dividing each of them by 0.12 + 0.08, which gives us the correct probabilities.
+
+We can now extract a general inference procedure. If we have a query with a single variable *X* (like *Cavity*), let **E** be the list of evidence variables (just *Toothache* in the example), and let **e** be the observed values for them, and let **Y** be the remaining unobserved variables (just *Catch* in the example). If the query is **P**(*X* | **e**), we can evaluate it as:
+
+**P**(*X* | **e**) = *alpha* * **P**(*X*, **e**) = *alpha* * sum(over **y**, **P**(*X*, **e**, **y**))
+
+where the summation is over all possible **y**s (i.e., all possible combinations of values of the unobserved variables **Y**). Notice that *X*, **E**, and **Y** constitute the complete set of variables for the domain and so **P**(*X*, **e**, **y**) is simply a subset of probabilities from the full joint distribution.
+
+Given a full joint distribution, we can answer probabilistic queries with this equation but it does not scale well. Consider a domain with *n* boolean variables. It needs an input table of size *O*(2^*n*) and takes *O*(2^*n*) time to process the table. 
+
+Independence
+------------
+
+What if we add another variable, *Weather*, to the toothache table? The full joint distribution is now **P**(*Toothache*, *Catch*, *Cavity*, *Weather*). What relationship can we infer? For example, how are *P*(*toothache*, *catch*, *cavity*, *cloudy*) and *P*(*toothache*, *catch*, *cavity*) related? Using the product rule:
+
+*P*(*toothache*, *catch*, *cavity*, *cloudy*) = *P*(*cloudy* | *toothache*, *catch*, *cavity*)*P*(*toothache*, *catch*, *cavity*)
+
+The weather has no bearing on the dental variables, so we can say:
+
+*P*(*cloudy* | *toothache*, *catch*, *cavity*) = *P*(*cloudy*)
+
+From this, we can deduce:
+
+*P*(*toothache*, *catch*, *cavity*, *cloudy*) = *P*(*cloudy*)*P*(*toothache*, *catch*, *cavity*)
+
+A similar equation exists for every entry in **P**(*Toothache*, *Catch*, *Cavity*, *Weather*) and therefore we can write the general equation:
+
+**P**(*Toothache*, *Catch*, *Cavity*, *Weather*) = **P**(*Toothache*, *Catch*, *Cavity*)**P**(*Weather*)
+
+This property is called **independence** (also **marginal independence** and **absolute independence**). In particular, the weather is independent of one's deptal problems. Independence between propositions *a* and *b* can be written as:
+
+*P*(*a* | *b*) = *P*(*a*) or *P*(*b* | *a*) = *P*(*b*) or *P*(*a* AND *b*) = *P*(*a*)*P*(*b*)
+
+Independence between variables *X* and *Y* can be written as follows:
+
+**P**(*X* | *Y*) = **P**(*X*) or **P**(*Y* | *X*) = **P**(*Y*) or **P**(*X*, *Y*) = **P**(*X*)**P**(*Y*)
+
+Bayes' Rule and its Use
+=======================
+
+Bayes rule is:
+
+*P*(*b* | *a*) = *P*(*a* | *b*)*P*(*b*) / *P*(*a*)
+
+In the more general case, for multivalued variables:
+
+**P**(*Y* | *X*) = **P**(*X* | *Y*)**P**(*Y*) / **P**(*X*)
+
+We also have a more general version conditionalized on some background evidence **e**:
+
+**P**(*Y* | *X*, **e**) = **P**(*X* | *Y*, **e**)**P**(*Y* | **e**) / **P**(*X* | **e**)
+
+Applying Bayes' rule: The simple case
+-------------------------------------
+
+Often we perceive as evidence the *effect* of some unknown *cause* and we would like to determine that cause. In that case, Bayes' rule becomes:
+
+*P*(*cause* | *effect*) = P(*effect* | *cause*)P(*cause*) / *P*(*effect*)
+
+The conditional probably *P*(*effect* | *cause*) quantifies the relationship in the **causal** direction, whereas *P*(*cause* | *effect*) describes the **diagnostic** direction. In medical diagnosis, we often have conditional probabilities on causal relationships. For example, the doctor knows *P*(*symptoms* | *disease*) and want to derive a diagnosis *P*(*disease* | *symptoms*). 
+
+For example, what if the doctor wants to know if the disease is meningitis given some symptoms? 
+
+Let's say:
+
+ - *P*(*stiff neck* | *meningitis*) = 0.7
+ - *P*(*meningitis*) = 1/50000
+ - *P*(*stiff neck*) = 0.01
+
+Then *P*(*m* | *s*) = *P*(*s* | *m*)*P*(*m*) / *P*(*s*) = (0.7 * (1/50000)/0.01 = 0.0014
+
+Recall that we can avoid accessing the prior probability of the evidence (*P*(*s*) here) by instead computing a posterior probability for each value of the query variable (here *m* and *not m*) and then normalizing the results. We can apply the same process using Bayes rule:
+
+**P**(*M* | *s*) = *alpha* <**P**(*s* | *m*)*P*(*m*), *P*(*s* | NOT *m*)*P*(NOT *m*)>
+
+To use this approach, we need to estimate *P*(*s* | NOT *m*) instead of *P*(*s*). This information may be easier to obtain than *P*(*s*) or it may be harder. The idea is that we have an alternate representation that we can use depending on how difficult it is to get some information. The general form of the Bayes' rule with normalization is:
+
+**P**(*Y* | *X*) = *alpha* * **P**(*X* | *Y*)**P**(*Y*)
+
+Using Bayes' rule: Combining evidence
+-------------------------------------
+
+What if we want to answer questions based on multiple pieces of evidence?
+
+For example, what if we wnat to answer **P**(*Cavity* | *toothache* AND *catch*)? We know that this approach does not scale up to large numbers of variables. We can try using Bayes' rule to reformulate it:
+
+**P**(*Cavity* | *toothache* AND *catch*) = *alpha* * **P**(*toothache* AND *catch* | *Cavity*)**P**(*Cavity*)
+
+For this to work we need conditional probabilities of *toothcahe* AND *catch* for each value of *Cavity*. However, this does not scale up. So what do we do? We can refine the earlier notion of **independence** to get the notion of **conditional independence**. 
+
+For example, it would be nice if *Toothache* and *Catch* were independent. They are not, because if the probe catches in the tooth, then it is likely that the tooth has cavity, and the cavity causes a toothache. However, these variables *are* independent *given the presence or absence of a cavity*. Each is directly caused by a cavity, but neither has a direct effect on the other (toothache is caused by the nerves signalling pain, and a catch is caused by the dentist's tool catching on the tooth). 
+
+Hence, we can say:
+
+**P**(*toothache* AND *catch* | *Cavity*) = **P**(*toothache* | *Cavity*)**P**(*catch* | *Cavity*)
+
+This equation expresses the **conditional independence** of *toothache* and *catch* given *Cavity*. This means we can plug it into the earlier equation)
+
+**P**(*Cavity* | *toothache* AND *catch*) = *alpha* * **P**(*toothache* | *Cavity*)**P**(*catch* | *Cavity*)**P**(*Cavity*)
+
+The general definition of **conditional independence** of two variables *X* and *Y* given a third variable *Z*, is
+
+**P**(*X*, *Y* | *Z*) = **P**(*X* | *Z*)**P**(*Y* | *Z*)
+
+Hence:
+
+**P**(*Tootache*, *Catch* | *Cavity*) = **P**(*Toothache* | *Cavity*)**P**(*Catch* | *Cavity*)
+
+As with absolute independence, we can have the equivalent forms:
+
+**P**(*X* | *Y*, *Z*) = **P**(*X* | *Z*) and **P**(*Y* | *X*, *Z*) = **P**(*Y* | *Z*)
+
+This means you can decompose the full joint distrubtion into smaller pieces.
+
+For example:
+
+**P**(*Toothache*, *Catch*, *Cavity*) = **P**(*Toothache*, *Catch* | *Cavity*)**P**(*Cavity*) (product rule) = **P**(*Toothache* | *Cavity*)**P**(*Catch* | *Cavity*)**P**(*Cavity*)
+
+The idea is that for *n* symptoms that are all conditionally independent given *Cavity*, the size of the representation grows as *O*(*n*) instead of *O*(2^*n*).
+
+Conditional independence assertions can allow probabilistic systems to scale up; morever, they are much more commonly available than absolute independence assertions. (pg 499 for why this helps - more details). The decomposition of large probabilistic domains into weakly connected subsets through conditional independence is one of the most important developments in the recent history of AI. The dentistry example illustrates a commonly occurring pattern in which a single cause directly influences a number of effects, all of which are conditionally independent, given the cause. The full joint distribution can be written as:
+
+**P**(*Cause*, *Effect 1*, ..., *Effect N*) = **P**(*Cause*) * product(over *i*, **P**(*Effect i* | *Cause*)
+
+Such a probability distribution is called a **naive Bayes** model. This is sometimes called a **Bayesian classifier**, which has prompted true Bayesians to call it the **idiot Bayes** model. 
+
+The Bayes classifier is the function that assigns a class label *y = Ck* for some *k* as follows:
+
+*y* = argmax(for *k* in *1..K*)(*P*(*Ck*)product(*i* to *n*, *P*(*xi*|*Ck*)))
+
+![Bayes classifier](http://upload.wikimedia.org/math/3/5/e/35e94f179a666c4b5892a11de1b3b29e.png)
+
