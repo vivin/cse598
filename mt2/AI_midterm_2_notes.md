@@ -76,7 +76,7 @@ See pg 707
 
  - **Missing data** Given a complete decision tree, how should one classify an example that is missing one of the test attributes? Second, how should one modify the information-gain formula, when some examples have unknown values for the attribute? 
  - **Multivalued attributes** How do you split on something like *ExactTime* that has a bunch of different values that are effectively singletons?
- - **Continuous and integer-valued input attributes** Something like *Height* and *Weight* would have an infinite set of possible values. Decision trees usually try to find a **split point** like, *Weight* > 160. 
+ - **Continuous and integer-valued input attributes** Something like *Height* and *Weight* would have an infinite set of possible values. Decision trees usually try to find a **split point** like, *Weight* &gt; 160. 
  - **Continuous-valued output attributes** If we are trying to predict a numerical output value, we need a **regression tree** rather than a classification tree. A regression tree has at each leaf a linear function of some subset of numerical attributes rather than a single value. Learning algorithm must decide when to stop splitting and begin applying linear regression over the attributes.
 
 Evaluating and Choosing the Best Hypothesis
@@ -213,13 +213,13 @@ A **decision boundary** is a line (or a surface, in higher dimensions) that sepa
 For the earthquake vs. nuke classification problem, we have the linear classifier `-4.9 + 1.7x1 - x2`. Where it is greater than 0, we have nuclear explosions whereas earthquakes are where this function evaluates to less than 0. If we use the convention of a dummy input such that `x0 = 1`, we can write the classification hypothesis as follows:
 
 ```
-hw(x) = 1 if w . x >= 0 and 0 otherwise
+hw(x) = 1 if w . x &gt;= 0 and 0 otherwise
 ```
 
 Alternatively, we can think of `h` as the result of passing the linear function `w . x` through a **threshold function**:
 
 ```
-hw(x) = Threshold(w . x) where Threshold(z) = 1 if z >= 0 and 0 otherwise
+hw(x) = Threshold(w . x) where Threshold(z) = 1 if z &gt;= 0 and 0 otherwise
 ```
 
 We don't have a closed-form solution that we can solve, and we cannot use gradient-descent either since the slope is 0 everywhere except at the point of discontinuity, where it does not exist at all (not differentiable). However, we can use a simple weight-update rule that converges to a solution - that is, a linear separator that classifies the data perfectly - provided the data are linearly separable. For a single example (x, y) we have:
@@ -301,7 +301,7 @@ It is possible to search the space of **`w`** and `b` with gradient descent to f
 argmax(alpha, sum(over j, alpha_j)) - (1/2)(sum(over j, k, alpha_j * alpha_k * yj * yk (xj . xk)))
 ```
 
-Subject to the constraints `alpha_j >= 0` and `sum(over j, alpha_j * yj) = 0`. This is a **quadratic programming** optimization problem that can be solved by many good software packages.
+Subject to the constraints `alpha_j &gt;= 0` and `sum(over j, alpha_j * yj) = 0`. This is a **quadratic programming** optimization problem that can be solved by many good software packages.
 
 Once we have found the vector `alpha`, we can get back to **`w`** with the equation `w = sum(over j, alpha_j * xj)`. Or we can stay in the dual representation.
 
@@ -345,7 +345,7 @@ Another way to view the ensemble idea is to think of it as a generic way of enla
 Boosting
 --------
 
-The most widely used ensemble method is called **boosting**. First we need to understand what a **weighted training set** is. In such a training set, each example has an associated weight `wj >= 0`. The higher the weight of an example, the higher is the importance attached to it during the learning of a hypothesis. We can easily modify existing algorithms to take the weight into account (where this is not possible, you can create a **replicated training set** where the jth example appears `wj` times, using randomization to handle fractional weights). Boosting starts with `wj = 1` for all the examples (normal training set). From this, it generates the first hypothesis `h1`. This hypothesis will classify some of the training examples correctly and some incorrectly. We want the  next hypothesis to do better on the miscalssified examples, so we increase their weights while decreasing the weights of the correctly classified examplles. From this weighted training set, we generate the hypothesis `h2`. The process continues until we have generated *K* hypotheses. The final ensemble hypothesis is a weighted-majority combination of all the K hypothesis, each weighted according to how well it performed on the training set (pg 750 for a visual example). 
+The most widely used ensemble method is called **boosting**. First we need to understand what a **weighted training set** is. In such a training set, each example has an associated weight `wj &gt;= 0`. The higher the weight of an example, the higher is the importance attached to it during the learning of a hypothesis. We can easily modify existing algorithms to take the weight into account (where this is not possible, you can create a **replicated training set** where the jth example appears `wj` times, using randomization to handle fractional weights). Boosting starts with `wj = 1` for all the examples (normal training set). From this, it generates the first hypothesis `h1`. This hypothesis will classify some of the training examples correctly and some incorrectly. We want the  next hypothesis to do better on the miscalssified examples, so we increase their weights while decreasing the weights of the correctly classified examplles. From this weighted training set, we generate the hypothesis `h2`. The process continues until we have generated *K* hypotheses. The final ensemble hypothesis is a weighted-majority combination of all the K hypothesis, each weighted according to how well it performed on the training set (pg 750 for a visual example). 
 
 A specific algorithm called ADABOOST has a very important property: if the input learning algorithm *L* is a **weak learning** algorithm - which means that *L* always returns a hypothesis with accuracy on the training set that is slightly better than random guessing (i.e., 50% + epsilon for Boolean classification) - then ADABOOST will return a hypothesis that *classifies the training data perfectly* for large enough K. Thus, the algorithm *boosts* the accuracy of the original learning algorithm on the training data. This result holds no matter how inexpressive the original hypothesis space and no matter how complex the function being learned. For decision trees, we can employ boosting on the **decision stumps**, which aredecision trees with just one test, at the root. (pg 750 for details).
 
@@ -403,7 +403,7 @@ The set of all possible worlds is the **sample space**. OMEGA (uppercase omega) 
 A fully specified **probability model** associates a numerical probability *P*(omega) with each possible world. The total probability of the set of possible worlds is 1:
 
 ```
-0 <= P(omega) <= 1 for every omega and sum(for every omega in OMEGA, P(omega)) = 1
+0 &lt;= P(omega) &lt;= 1 for every omega and sum(for every omega in OMEGA, P(omega)) = 1
 ```
 
 Probabilistic assertions and queries are not usually about particular possible worlds, but sets of them. For example, we might be interested in the cases where two dice add up to 11. In probability theory, these sets are called **events**. In AI, the sets are always described by **propositions** in a formal language. The probability associated with a proposition is defined to be the sum of pobabilities of the worlds in which it holds:
@@ -428,7 +428,7 @@ Variables in probability theory are called **random variables** and their names 
 
 By convention, propositions of the form `A = true` are simply abbreviated as `a` whereas `A = false` is abbreviated as `NOT a`. 
 
-Variables can have infinite domains as well. For any variable with an ordered domain, inequalities are allowed as well such as NumberOfAtomsInUniverse >= 10^70.
+Variables can have infinite domains as well. For any variable with an ordered domain, inequalities are allowed as well such as NumberOfAtomsInUniverse &gt;= 10^70.
 
 Sometimes we will want to talk about the probabilities of all the possible values of a random variable. We could write:
 
@@ -439,7 +439,7 @@ Sometimes we will want to talk about the probabilities of all the possible value
 
 But as an abbreviation, we can have:
 
- - **P**(Weather) = <0.6, 0.1, 0.29, 0.01>
+ - **P**(Weather) = &lt;0.6, 0.1, 0.29, 0.01&gt;
 
 The bold **P** indicates that the result is a vector of numbers, where we assume a pre-defined ordering on the domain of *Weather*. We say that the **P** statement defines a **probability distribution** for the random variable *Weather*. The **P** notation is also used for conditional distributions: **P**(*X* | *Y*) gives the values of *P*(*X* = *xi* | *Y* = *yi*) for each possible *i*, *j* pair.
 
@@ -457,7 +457,7 @@ In addition to distributions on single variables, we need notation for distribut
 
 This is much more concise than writing 4 x 2 = 8 equations. 
 
-As a degenerate case, **P**(*sunny*, *cavity*) has no variables and thus is a one-element vector that is the probability of a sunny day with a cavity, which could also be written as *P*(*sunny*, *cavity*) or *P*(*sunny* AND *cavity*). We will sometimes use **P** notation to derive results about invidividual *P* values, and when we say **P**(*sunny*) = 0.6, it is really an abbreviation for "**P**(*sunny*) is the one-element vector <0.6>, which means that *P*(*sunny*) = 0.6."
+As a degenerate case, **P**(*sunny*, *cavity*) has no variables and thus is a one-element vector that is the probability of a sunny day with a cavity, which could also be written as *P*(*sunny*, *cavity*) or *P*(*sunny* AND *cavity*). We will sometimes use **P** notation to derive results about invidividual *P* values, and when we say **P**(*sunny*) = 0.6, it is really an abbreviation for "**P**(*sunny*) is the one-element vector &lt;0.6&gt;, which means that *P*(*sunny*) = 0.6."
 
 A probability model is completely determined by the joint distribution for all of the random variables - this is the **full joint probability distribution**. For example, if the random variables are *Cavity*, *Toothache*, and *Weather*, then the full joint distribution is given by **P**(*Cavity*, *Toothache*, *Weather*). 
 
@@ -502,7 +502,7 @@ For **P**(*Cavity* | *toothache*), we basically have *P*(*cavity* | *toothache*)
 
 **P**(*Cavity* | *toothache*) = *alpha* * **P**(*Cavity*, *toothache*) = *alpha* * \[**P**(*Cavity*, *toothache*, *catch*) + **P**(*Cavity*, *toothache*, NOT *catch*)\]
 
-We end up with *alpha* * <0.12, 0.08> = <0.6, 0.6>.
+We end up with *alpha* * &lt;0.12, 0.08&gt; = &lt;0.6, 0.6&gt;.
 
 Here, even if we don't know *P*(*toothache*), we can forget about 1/*P*(*toothache*) and just add up the values getting 0.12 and 0.08. The relative proprtions are right and so we can nromalize by dividing each of them by 0.12 + 0.08, which gives us the correct probabilities.
 
@@ -577,7 +577,7 @@ Then *P*(*m* | *s*) = *P*(*s* | *m*)*P*(*m*) / *P*(*s*) = (0.7 * (1/50000)/0.01 
 
 Recall that we can avoid accessing the prior probability of the evidence (*P*(*s*) here) by instead computing a posterior probability for each value of the query variable (here *m* and *not m*) and then normalizing the results. We can apply the same process using Bayes rule:
 
-**P**(*M* | *s*) = *alpha* <**P**(*s* | *m*)*P*(*m*), *P*(*s* | NOT *m*)*P*(NOT *m*)>
+**P**(*M* | *s*) = *alpha* &lt;**P**(*s* | *m*)*P*(*m*), *P*(*s* | NOT *m*)*P*(NOT *m*)&gt;
 
 To use this approach, we need to estimate *P*(*s* | NOT *m*) instead of *P*(*s*). This information may be easier to obtain than *P*(*s*) or it may be harder. The idea is that we have an alternate representation that we can use depending on how difficult it is to get some information. The general form of the Bayes' rule with normalization is:
 
